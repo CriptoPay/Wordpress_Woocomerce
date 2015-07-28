@@ -25,6 +25,7 @@
 class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
 
     protected $CP_ApiId, $CP_ApiPassword;
+    
     /**
      * Constructor para la entrada.
      *
@@ -57,6 +58,7 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
 
     /**
      * Inicializar los campos de los formularios de configuración de entrada
+     * Estos son los que aparecerán en nuestro Woocommerce
      *
      * @access public
      * @return void
@@ -65,23 +67,23 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
 
         $this->form_fields = array(
             'enabled' => array(
-                'title' => __('Enable/Disable', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
+                'title' => __('Habilitar/Deshabilitar', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'type' => 'checkbox',
                 'label' => __('Habilitar CriptoPay', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'default' => 'yes'
             ),
             'title' => array(
-                'title' => __('Title', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
+                'title' => __('Título', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'type' => 'text',
                 'description' => __('Este título se mostrará en el proceso de checkout.', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'default' => __('CriptoPay', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'desc_tip' => true,
             ),
             'description' => array(
-                'title' => __('Description', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
+                'title' => __('Descripción', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'type' => 'textarea',
-                'description' => __('Descripción del método de pago. Use it to tell the user that it is a secure system through bank.', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
-                'default' => __('Secure payment by credit card. You will be redirected to the secure website of the bank.', WOOCOMMERCE_CRIPTOPAY_DOMAIN)
+                'description' => __('Descripción del método de pago. Utilícelo para decirle al usuario que es un sistema de pago rápido y seguro.', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
+                'default' => __('Pagos seguros a través de nuestros servidores. Será redirigido a la pasarela de pago de Cripto-Pay.', WOOCOMMERCE_CRIPTOPAY_DOMAIN)
             ),
             'usuario' => array(
                 'title' => __('Usuario', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
@@ -128,7 +130,7 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
         </p>
         <table class="form-table">
             <?php
-            // Generate the HTML For the settings form.
+            // Genera el HTML de configuración.
             $this->generate_settings_html();
             ?>
         </table>
@@ -139,7 +141,7 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
         }
 
         /**
-         * Output for the order received page.
+         * Salida cuando damos al botón de pago
          *
          * @access public
          * @return void
@@ -152,7 +154,7 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
         }
 
         /**
-         * Generate the paypal button link
+         * Generamos el link de pago de Cripto-Pay
          *
          * @access public
          * @param mixed $order_id
@@ -163,6 +165,7 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
 
             $order = new WC_Order($order_id);
 
+            // Diferenciamos si trabajamos con el servidor real del de pruebas
             if ($this->sandbox == 'yes') {
                 $criptopay_srv = 'https://sandbox.cripto-pay.com';
             } else {
@@ -199,8 +202,8 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
                 throw new Exception("CRiptoPay no está configurado correctamente");
             }
             
-/*
-            $criptopay_args = $this->get_criptopay_args($order);
+
+            /*$criptopay_args = $this->get_criptopay_args($order);
 
             $criptopay_args_array = array();
 
@@ -256,7 +259,7 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
 			' . implode('', $criptopay_args_array) . '
 			<input type="submit" class="button-alt" id="submit_criptopay_payment_form" value="' . __('Pay via CriptoPay', WOOCOMMERCE_CRIPTOPAY_DOMAIN) . '" /> <a class="button cancel" href="' . esc_url($order->get_cancel_order_url()) . '">' . __('Cancel order &amp; restore cart', WOOCOMMERCE_CRIPTOPAY_DOMAIN) . '</a>
 			</form>';*/
-        }
+        }// END Function
 
         /**
          * Get Servired Args for passing to PP
@@ -315,6 +318,7 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
             return $args;
         }*/
 
+        
         /**
          * Procesado del pago y retorno del resultado
          *
@@ -332,6 +336,9 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
             );
         }
 
+        /**
+         * Publicidad para el footer
+         */
         /*function printFooter() {
             $output = '<hr>';
             $output .= '<div style="background-color:#ccc; padding: 20px 10px;">';

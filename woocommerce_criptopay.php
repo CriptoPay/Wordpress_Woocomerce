@@ -22,16 +22,16 @@
  *
  * Plugin Name: Woocommerce CriptoPay
  * Plugin URI: http://www.cripto-pay.com
- * Description: Pagos con bitcoins y altcoins para Woocommerce. Versión 1.0.
+ * Description: Pagos con bitcoins y altcoins para Woocommerce. Versiï¿½n 1.0.
  * Author: Cripto-Pay
  * Author URI: http://www.cripto-pay.com
- * Developer: Carlos González
+ * Developer: Carlos Gonzï¿½lez
  * Text Domain: woocommerce-criptopay
  * Version: 1.0
  */
 
 /**
- * Primero comprobamos que el plugin de WooCommerce esté activo
+ * Primero comprobamos que el plugin de WooCommerce estï¿½ activo
  **/
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
     
@@ -44,14 +44,14 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
     }
 
     /** 
-     * Pone el sistema a trabajar en modo desarrollo(true) o producción(false)
+     * Pone el sistema a trabajar en modo desarrollo(true) o producciï¿½n(false)
      **/
     if(!defined('WP_DEBUG')){
-        define('WP_DEBUG',true);// En modo producción (false) no saltan excepciones que no sean graves.
+        define('WP_DEBUG',true);// En modo producciï¿½n (false) no saltan excepciones que no sean graves.
     }
     
     /**
-     * Si nuestra URL personal no está definida, la definimos con la ruta del URL
+     * Si nuestra URL personal no estï¿½ definida, la definimos con la ruta del URL
      */
     if ( !defined( 'WOOCOMMERCE_CRIPTOPAY_URL' ) ) {
             define( 'WOOCOMMERCE_CRIPTOPAY_URL', plugins_url() . '/woocommerce-criptopay' ); // No usamos WP_PLUGIN_URL ya que no trabaja con protocolos de SSL
@@ -63,18 +63,29 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
     require_once(__DIR__.'/inc/CriptoPay_API_PHP/src/bootstrap.php');
 
     /**
-     * 
+     * Definimos el dominio
      */
     define( 'WOOCOMMERCE_CRIPTOPAY_DOMAIN', 'woocriptopay' );
-
+    
+    /**
+     * incluimos las funciones definidas abajo
+     */
     add_action( 'plugins_loaded', 'woocommerce_gateway_criptopay_init' );
 
     add_action( 'init', 'miFuncion' );
 
+    /**
+     * FunciÃ³n para definir el lenguaje
+     */
     function miFuncion() {
             load_plugin_textdomain( WOOCOMMERCE_CRIPTOPAY_DOMAIN, null, __DIR__.'/languages' );
     }
 
+    /**
+     * Inicializamos nuestra clase incluyendo las funciones del IPN y el getaway del mÃ©todo
+     * 
+     * @return type
+     */
     function woocommerce_gateway_criptopay_init() {
 
             if ( !class_exists( 'WC_Payment_Gateway' ) ) return;
@@ -88,23 +99,28 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
             add_action( 'woocommerce_api_wc_gateway_criptopay', 'wooomercer_ipn_response_criptopay' );
     }
 
+    /**
+     * Definimos el nuevo estatus y una pequeÃ±a frase para cada opciÃ³n del IPN
+     * 
+     * @throws Exception
+     */
     function wooomercer_ipn_response_criptopay () {
 
             $datos = $_POST;
             //RESPUESTA IPN CRIPTOPAY
             if(isset($datos['order'])){
-                $order = new WC_Order($datos['order']);
+                $order = new WC_Order($datos['order']); //si existe algo, instanciamos nuestro objeto
             }
+            
             if ( $order->status == 'completed' ) {
                     exit;
             }
-                       
             
             if($datos['estado'] === "aceptado"){
-                $order->add_order_note( sprintf( __( 'Operación con Cripto-Pay completada con éxito. TXID %s', WOOCOMMERCE_CRIPTOPAY_DOMAIN ), $datos['txid'] ) );
+                $order->add_order_note( sprintf( __( 'OperaciÃ³n con Cripto-Pay completada con Ã©xito. TXID %s', WOOCOMMERCE_CRIPTOPAY_DOMAIN ), $datos['txid'] ) );
                 $order->update_status('completed');
             }elseif($datos['estado']=="incompleto"){
-                $order->add_order_note( sprintf( __( 'Operación con Cripto-Pay incompleta.Faltan %n %s . TXID parcial %s', WOOCOMMERCE_CRIPTOPAY_DOMAIN ), $datos['parcial'], $datos['divisa'], $datos['txid'] ) );
+                $order->add_order_note( sprintf( __( 'OperaciÃ³n con Cripto-Pay incompleta.Faltan %n %s . TXID parcial %s', WOOCOMMERCE_CRIPTOPAY_DOMAIN ), $datos['parcial'], $datos['divisa'], $datos['txid'] ) );
                 $order->update_status('procesing');
             }elseif($datos['estado']==="pendiente"){
                 exit;
@@ -114,7 +130,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
             
             
             /*
-
             if ($datos['Ds_Response']=='0000') {  // Operacion correcta
 
                     $ds_order = ( $datos['Ds_Order'] );
@@ -127,20 +142,24 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                             exit;
                     }
 
-                    $order->add_order_note( sprintf( __( 'Operación con Cripto-Pay completada con éxito. Código %s', WOOCOMMERCE_CRIPTOPAY_DOMAIN ), $datos['Ds_AuthorisationCode'] ) );
+                    $order->add_order_note( sprintf( __( 'Operaciï¿½n con Cripto-Pay completada con ï¿½xito. Cï¿½digo %s', WOOCOMMERCE_CRIPTOPAY_DOMAIN ), $datos['Ds_AuthorisationCode'] ) );
 
             } else {
-                    // Operación incorrecta
+                    // Operaciï¿½n incorrecta
                     $order_id = ( $datos['Ds_Order'] );
                     $order = new WC_Order( $order_id );
 
-                    $order->add_order_note( sprintf( __( 'ERROR en la peración. Código %s', WOOCOMMERCE_CRIPTOPAY_DOMAIN ), $datos['Ds_ErrorCode'] ) );
-
-            }
-*/
+                    $order->add_order_note( sprintf( __( 'ERROR en la peraciï¿½n. Cï¿½digo %s', WOOCOMMERCE_CRIPTOPAY_DOMAIN ), $datos['Ds_ErrorCode'] ) );
+            }*/
     }
 
 
+    /**
+     * FunciÃ³n que nos devuelve la posiciÃ³n del array del mÃ©todo
+     * 
+     * @param array $methods
+     * @return string
+     */
     function woocommerce_add_gateway_criptopay_gateway($methods) {
             $methods[] = 'WC_Gateway_CriptoPay';
             return $methods;
