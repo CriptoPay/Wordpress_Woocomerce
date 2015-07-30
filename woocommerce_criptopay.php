@@ -31,7 +31,7 @@
  */
 
 /**
- * Primero comprobamos que el plugin de WooCommerce est� activo
+ * Primero comprobamos que el plugin de WooCommerce esté activo
  **/
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
     
@@ -44,17 +44,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
     }
 
     /** 
-     * Pone el sistema a trabajar en modo desarrollo(true) o producci�n(false)
+     * Pone el sistema a trabajar en modo desarrollo(true) o producción(false)
      **/
     if(!defined('WP_DEBUG')){
-        define('WP_DEBUG',true);// En modo producci�n (false) no saltan excepciones que no sean graves.
+        define('WP_DEBUG',true);// En modo producción (false) no saltan excepciones que no sean graves.
     }
     
     /**
-     * Si nuestra URL personal no est� definida, la definimos con la ruta del URL
+     * Si nuestra URL personal no está definida, la definimos con la ruta del URL
      */
     if ( !defined( 'WOOCOMMERCE_CRIPTOPAY_URL' ) ) {
-            define( 'WOOCOMMERCE_CRIPTOPAY_URL', plugins_url() . '/woocommerce-criptopay' ); // No usamos WP_PLUGIN_URL ya que no trabaja con protocolos de SSL
+            define( 'WOOCOMMERCE_CRIPTOPAY_URL', plugins_url() . '/woocomerce_criptopay' ); // No usamos WP_PLUGIN_URL ya que no trabaja con protocolos de SSL
     }
 
     /**

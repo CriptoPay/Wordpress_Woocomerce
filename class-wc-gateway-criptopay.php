@@ -22,6 +22,14 @@
  * @package woocommerce-criptopay
  * @since woocommerce 2.0.0
  */
+
+/**
+ * Para evitar fugas de datos por accesos directos 
+ **/
+if ( ! defined( 'ABSPATH' ) ) { 
+   exit; // Sale si tratan de acceder directamente
+}
+    
 class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
 
     protected $CP_ApiId, $CP_ApiPassword;
@@ -80,32 +88,34 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
                 'desc_tip' => true,
             ),
             'description' => array(
-                'title' => __('Descripción', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
-                'type' => 'textarea',
+                'title'       => __( 'Description', WOOCOMMERCE_CRIPTOPAY_DOMAIN ),
+		'type'        => 'text',
+		'desc_tip'    => true,
                 'description' => __('Descripción del método de pago. Utilícelo para decirle al usuario que es un sistema de pago rápido y seguro.', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'default' => __('Pagos seguros a través de nuestros servidores. Será redirigido a la pasarela de pago de Cripto-Pay.', WOOCOMMERCE_CRIPTOPAY_DOMAIN)
             ),
             'usuario' => array(
                 'title' => __('Usuario', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'type' => 'text',
+                'description' => __('Nombre de usuario', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'default' => ''
             ),
             'password' => array(
-                'title' => __('Password', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
+                'title' => __('Contraseña', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'type' => 'text',
-                'description' => __('Password encriptado', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
+                'description' => __('Contraseña encriptoada', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'default' => ''
             ),
             'cert_publico' => array(
                 'title' => __('Certificado Público', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'type' => 'file',
-                'description' => __('Certi public', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
+                'description' => __('Certificado Público', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'default' => ''
             ),
             'cert_privado' => array(
                 'title' => __('Certificado Privado', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'type' => 'file',
-                'description' => __('Certi priva', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
+                'description' => __('Certificado privado', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'default' => ''
             ),
             
@@ -194,12 +204,12 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
             $respuesta = $CRIPTOPAY->Get("PAGO","GENERAR");
             if(isset($respuesta->idpago)){
                 if ($this->sandbox == 'yes') {
-                    header("Location: https://sandbox.cripto-pay.com/pago/".$respuesta->idpago);
+                    $url='https://sandbox.cripto-pay.com/pago/'.$respuesta->idpago;
                 } else {
-                    header("Location: https://cripto-pay.com/pago/".$respuesta->idpago);
+                    $url='https://cripto-pay.com/pago/'.$respuesta->idpago;
                 }
             }else{
-                throw new Exception("CRiptoPay no está configurado correctamente");
+                throw new Exception("CriptoPay no está configurado correctamente");
             }
             
 
@@ -209,56 +219,15 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
 
             foreach ($criptopay_args as $key => $value) {
                 $criptopay_args_array[] = '<input type="hidden" name="' . esc_attr($key) . '" value="' . esc_attr($value) . '" />';
-            }
+            }*/
 
             if (method_exists($woocommerce, 'add_inline_js')) {
-                $woocommerce->add_inline_js('
-				jQuery("body").block({
-					message: "<img src=\"' . esc_url(apply_filters('woocommerce_ajax_loader_url', $woocommerce->plugin_url() . '/assets/images/ajax-loader.gif')) . '\" alt=\"Redirecting&hellip;\" style=\"float:left; margin-right: 10px;\" />' . __('Thank you for your order. We are now redirecting you to servired to make payment.', WOOCOMMERCE_CRIPTOPAY_DOMAIN) . '",
-					overlayCSS:
-					{
-						background: "#fff",
-						opacity: 0.6
-					},
-					css: {
-						padding:        20,
-						textAlign:      "center",
-						color:          "#555",
-						border:         "3px solid #aaa",
-						backgroundColor:"#fff",
-						cursor:         "wait",
-						lineHeight:		"32px"
-					}
-				});
-				jQuery("#submit_servired_light_payment_form").click();
-			');
+                $woocommerce->add_inline_js('windows.location.replace('.$url.')');
             } else {
-                wc_enqueue_js('
-				jQuery("body").block({
-					message: "<img src=\"' . esc_url(apply_filters('woocommerce_ajax_loader_url', $woocommerce->plugin_url() . '/assets/images/ajax-loader.gif')) . '\" alt=\"Redirecting&hellip;\" style=\"float:left; margin-right: 10px;\" />' . __('Thank you for your order. We are now redirecting you to servired to make payment.', WOOCOMMERCE_CRIPTOPAY_DOMAIN) . '",
-					overlayCSS:
-					{
-						background: "#fff",
-						opacity: 0.6
-					},
-					css: {
-						padding:        20,
-						textAlign:      "center",
-						color:          "#555",
-						border:         "3px solid #aaa",
-						backgroundColor:"#fff",
-						cursor:         "wait",
-						lineHeight:		"32px"
-					}
-				});
-				jQuery("#submit_criptopay_payment_form").click();
-			');
+                wc_enqueue_js('windows.location.replace('.$url.')');
             }
 
-            return '<form action="' . esc_url($criptopay_adr) . '" method="post" id="criptopay_payment_form" target="_top">
-			' . implode('', $criptopay_args_array) . '
-			<input type="submit" class="button-alt" id="submit_criptopay_payment_form" value="' . __('Pay via CriptoPay', WOOCOMMERCE_CRIPTOPAY_DOMAIN) . '" /> <a class="button cancel" href="' . esc_url($order->get_cancel_order_url()) . '">' . __('Cancel order &amp; restore cart', WOOCOMMERCE_CRIPTOPAY_DOMAIN) . '</a>
-			</form>';*/
+            return true;
         }// END Function
 
         /**
