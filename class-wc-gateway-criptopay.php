@@ -88,7 +88,7 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
                 'desc_tip' => true,
             ),
             'description' => array(
-                'title'       => __( 'Description', WOOCOMMERCE_CRIPTOPAY_DOMAIN ),
+                'title'       => __( 'Descripción', WOOCOMMERCE_CRIPTOPAY_DOMAIN ),
 		'type'        => 'text',
 		'desc_tip'    => true,
                 'description' => __('Descripción del método de pago. Utilícelo para decirle al usuario que es un sistema de pago rápido y seguro.', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
@@ -103,7 +103,7 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
             'password' => array(
                 'title' => __('Contraseña', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'type' => 'text',
-                'description' => __('Contraseña encriptoada', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
+                'description' => __('Contraseña encriptada', WOOCOMMERCE_CRIPTOPAY_DOMAIN),
                 'default' => ''
             ),
             'cert_publico' => array(
@@ -158,9 +158,9 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
          */
         function receipt_page($order) {
 
-            //echo '<p>' . __('Thank you for your order, click on the button to pay for CriptoPay.', WOOCOMMERCE_CRIPTOPAY_DOMAIN) . '</p>';
+            echo '<p>' . __('Thank you for your order, click on the button to pay for CriptoPay.', WOOCOMMERCE_CRIPTOPAY_DOMAIN) . '</p>';
 
-            echo $this->generate_criptopay_form($order);
+            //echo $this->process_payment($order);
         }
 
         /**
@@ -170,47 +170,7 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
          * @param mixed $order_id
          * @return string
          */
-        function generate_criptopay_form($order_id) {
-            global $woocommerce;
-
-            $order = new WC_Order($order_id);
-
-            // Diferenciamos si trabajamos con el servidor real del de pruebas
-            if ($this->sandbox == 'yes') {
-                $criptopay_srv = 'https://sandbox.cripto-pay.com';
-            } else {
-                $criptopay_srv = 'https://api.cripto-pay.com';
-            }
-            
-
-            Comun\LOG::Iniciar(LOG_DEBUG,LOG_INFO,"logCriptoPayApiRest.csv");
-
-            //Instancia del Objeto para realizar la acciones
-            $CRIPTOPAY = new Comun\CriptoPayApiRest($this->CP_ApiId,$this->CP_ApiPassword,__DIR__.'/certs');
-
-            //Creamos los parametros para el pago a generar
-            $pago = array(
-                "total" => (float)$order->GetTotal(), // Obligatorio
-                "divisa" => "EUR",      //Obligatorio
-                "concepto" => $this->merchantName.". Pedido: ".$order->get_order_number(), //Obligatorio
-                "URL_OK" => $this->get_return_url($order), //Opcionales
-                "URL_KO" => get_permalink(woocommerce_get_page_id('checkout')), //Opcionales
-                "IPN" => str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Gateway_CriptoPay', home_url( '/' ) ) ),
-                "IPN_POST" => array("order"=>$order_id)//Opcionales
-            );
-            //Agregamos los parámetros a la consulta
-            $CRIPTOPAY->Set($pago);
-            //Ejecutamos la función en sí.
-            $respuesta = $CRIPTOPAY->Get("PAGO","GENERAR");
-            if(isset($respuesta->idpago)){
-                if ($this->sandbox == 'yes') {
-                    $url='https://sandbox.cripto-pay.com/pago/'.$respuesta->idpago;
-                } else {
-                    $url='https://cripto-pay.com/pago/'.$respuesta->idpago;
-                }
-            }else{
-                throw new Exception("CriptoPay no está configurado correctamente");
-            }
+       //function generate_criptopay_form($order_id) {
             
 
             /*$criptopay_args = $this->get_criptopay_args($order);
@@ -221,14 +181,14 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
                 $criptopay_args_array[] = '<input type="hidden" name="' . esc_attr($key) . '" value="' . esc_attr($value) . '" />';
             }*/
 
-            if (method_exists($woocommerce, 'add_inline_js')) {
+            /*if (method_exists($woocommerce, 'add_inline_js')) {
                 $woocommerce->add_inline_js('windows.location.replace('.$url.')');
             } else {
                 wc_enqueue_js('windows.location.replace('.$url.')');
             }
 
             return true;
-        }// END Function
+        }*/// END Function
 
         /**
          * Get Servired Args for passing to PP
@@ -297,11 +257,53 @@ class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
          */
         function process_payment($order_id) {
 
+            global $woocommerce;
+
             $order = new WC_Order($order_id);
+
+            // Diferenciamos si trabajamos con el servidor real del de pruebas
+            if ($this->sandbox == 'yes') {
+                $criptopay_srv = 'https://sandbox.cripto-pay.com';
+            } else {
+                $criptopay_srv = 'https://api.cripto-pay.com';
+            }
+            
+
+            Comun\LOG::Iniciar(LOG_DEBUG,LOG_INFO,"logCriptoPayApiRest.csv");
+
+            //Instancia del Objeto para realizar la acciones
+            $CRIPTOPAY = new Comun\CriptoPayApiRest($this->CP_ApiId,$this->CP_ApiPassword,__DIR__.'/certs');
+
+            //Creamos los parametros para el pago a generar
+            $pago = array(
+                "total" => (float)$order->GetTotal(), // Obligatorio
+                "divisa" => get_woocommerce_currency(),//, apply_filters( 'woocommerce_paypal_supported_currencies', array( 'BIT', 'DOG', 'SPA', 'ALT' ) ) ),      //Obligatorio
+                "concepto" => $this->merchantName.". Pedido: ".$order->get_order_number(), //Obligatorio
+                "URL_OK" => $this->get_return_url($order), //Opcionales
+                "URL_KO" => get_permalink(woocommerce_get_page_id('checkout')), //Opcionales
+                "IPN" => str_replace( 'https:', 'http:', add_query_arg( 'wc-api', 'WC_Gateway_CriptoPay', home_url( '/' ) ) ),
+                "IPN_POST" => array("order"=>$order_id)//Opcionales
+            );
+            //Agregamos los parámetros a la consulta
+            $CRIPTOPAY->Set($pago);
+            //Ejecutamos la función en sí.
+            $respuesta = $CRIPTOPAY->Get("PAGO","GENERAR");
+            if(isset($respuesta->idpago)){
+                if ($this->sandbox == 'yes') {
+                    $url='https://sandbox.cripto-pay.com/pago/'.$respuesta->idpago;
+                } else {
+                    $url='https://cripto-pay.com/pago/'.$respuesta->idpago;
+                }
+            }else{
+                throw new Exception("CriptoPay no está configurado correctamente");
+            }
+            
+            //return true;
 
             return array(
                 'result' => 'success',
-                'redirect' => add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay'))))
+                /*'redirect' => add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay'))))*/
+                'redirect' => $url
             );
         }
 
