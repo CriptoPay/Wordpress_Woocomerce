@@ -35,8 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
    exit; // Sale si tratan de acceder directamente
 }
 
-
-class WC_Gateway_CriptoPay extends \WC_Payment_Gateway {
+class WC_Gateway_CriptoPay extends WC_Payment_Gateway {
 
     protected $CP_ApiId, $CP_ApiPassword, $CP_Sandbox;
         
@@ -49,7 +48,9 @@ class WC_Gateway_CriptoPay extends \WC_Payment_Gateway {
     public function __construct() {
 
         $this->id = 'criptopay';
-        $this->icon = apply_filters('woocommerce_criptopay_icon', WOOCOMMERCE_CRIPTOPAY_URL . '/imagenes/logo.png');
+        $icon_html = WOOCOMMERCE_CRIPTOPAY_URL . '/imagenes/logo.png" alt="CriptoPay"/><a href="https://cripto-pay.com/?utm_source=Woocomerce_plugin&utm_medium='.get_permalink(woocommerce_get_page_id('checkout')).'&utm_campaign=Checkout_quees" target="_blank">¿Que es CriptoPay?</a><img style="display:none"';
+
+	$this->icon = apply_filters( 'woocommerce_criptopay_icon', $icon_html, $this->id );        
         $this->has_fields = false;
         $this->method_title = __('CriptoPay (Bitcoin & Altcoins)', WOOCOMMERCE_CRIPTOPAY_DOMAIN);
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * wordpress_woocomerce.php
+ * CriptoPay-wordpress-woocomerce.php
  *
  * Copyright (c) Cripto-Pay cripto-pay.com
  * 
@@ -51,7 +51,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
      * Si nuestra URL personal no está definida, la definimos con la ruta del URL
      */
     if ( !defined( 'WOOCOMMERCE_CRIPTOPAY_URL' ) ) {
-            define( 'WOOCOMMERCE_CRIPTOPAY_URL', plugins_url() . '/CriptoPay-wordpress-woocomerce' ); // No usamos WP_PLUGIN_URL ya que no trabaja con protocolos de SSL
+            define( 'WOOCOMMERCE_CRIPTOPAY_URL', plugins_url() . '/CriptoPay_wordpress-woocomerce' ); // No usamos WP_PLUGIN_URL ya que no trabaja con protocolos de SSL
     }
 
     /**
