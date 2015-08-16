@@ -17,31 +17,52 @@ class Log {
     const tabla = "log";
         
     private static $instancia = NULL;
+    private static $iniciado = NULL;
     
-    private $inicio;
+    private $inicio,$fh;
     
     protected $datoslog,$contadores,$FICHERO;
         
-    protected $NIVELREGISTRO = LOG_INFO;
-    protected $NIVELMOSTRAR = LOG_INFO;
+    protected $NIVELREGISTRO = 4; //LOG_WARNING
+    protected $NIVELMOSTRAR = 6; //LOG_NOTICE
         
     const SEPARADOR = ",";
     
-    protected function __construct($nivelmostrar,$nivelregistro,$fichero) {
+    protected function __construct($nivelmostrar,$nivelregistro,$fichero=null) {
         $this->inicio = microtime(true);
         $this->NIVELMOSTRAR = (is_null($nivelmostrar))? $this->NIVELMOSTRAR:$nivelmostrar;
         $this->NIVELREGISTRO = (is_null($nivelregistro))? $this->NIVELREGISTRO:$nivelregistro;
-        $this->FICHERO = $fichero;
+        if(CP_DEBUG){
+            $this->FICHERO = (is_null($fichero))?dirname(__DIR__)."/logs/CriptoPayAPISandbox.csv":$fichero;
+        }else{
+            $this->FICHERO = (is_null($fichero))?dirname(__DIR__)."/logs/CriptoPayAPI.csv":$fichero;
+        }
+        if (!file_exists($this->FICHERO)) {
+                $headers = 'TIME' . self::SEPARADOR . 
+			'DATE' . self::SEPARADOR .
+			'NIVEL' . self::SEPARADOR .
+			'TAG' . self::SEPARADOR .
+			'MENSAJE' . self::SEPARADOR .
+                        'FICHERO' . self::SEPARADOR .
+			'LINEA'. "\n";
+        }
+        $this->fh = fopen($this->FICHERO, "a");
+        if (@$headers) {
+                fwrite($this->fh, $headers);
+        }
+        
+        
     }
     
-    protected static function Instancia($nivelmostrar=null,$nivelregistro=null,$fichero="logCriptoPayApiRest.csv"){
+    protected static function Instancia($nivelmostrar=null,$nivelregistro=null,$fichero=null){
             if(is_null(self::$instancia)){
                     self::$instancia = new Log($nivelmostrar,$nivelregistro,$fichero);
             }
             return self::$instancia;
     }
     
-    public function Iniciar($nivelmostrar,$nivelregistro,$fichero){
+    public static function Iniciar($nivelmostrar=LOG_INFO,$nivelregistro=LOG_INFO,$fichero=null){
+        self::$iniciado = true;
         $LOG = self::Instancia($nivelmostrar,$nivelregistro,$fichero);
         $LOG->Add(LOG_INFO,"Inicio Script");
     }
@@ -115,38 +136,26 @@ class Log {
     }
     
     protected function AddFichero($nivel,$mensaje,$tag='') {
-        if (!file_exists($this->FICHERO)) {
-                $headers = 'TIME' . self::SEPARADOR . 
-			'DATE' . self::SEPARADOR .
-			'NIVEL' . self::SEPARADOR .
-			'TAG' . self::SEPARADOR .
-			'MENSAJE' . self::SEPARADOR .
-                        'FICHERO' . self::SEPARADOR .
-			'LINEA'. "\n";
-        }
-        $fd = fopen($this->FICHERO, "a");
-        if (@$headers) {
-                fwrite($fd, $headers);
-        }
-        fputcsv($fd, $this->datoslog[count($this->datoslog)-1], self::SEPARADOR);
-        fclose($fd);
+        fputcsv($this->fh, $this->datoslog[count($this->datoslog)-1], self::SEPARADOR);
     }
     
     public function __destruct() {
         $time = microtime(true)-$this->inicio;
-        $this->Add(LOG_INFO, "Tiempo total: ".$time);
-        if(LOG_DEBUG<=$this->NIVELMOSTRAR){
-            echo '-------------RESUMEN---------------------'.PHP_EOL;
-            echo 'Nº Eventos: '.count($this->datoslog).PHP_EOL;
-            echo 'Tiempo total '.$time.PHP_EOL;
-            if(count($this->contadores)>0){            
-                echo '------------CONTADORES--------------------'.PHP_EOL;
-                foreach($this->contadores as $contador=>$valor){
-                    echo 'Recuento '.$contador.":".$valor.PHP_EOL;
+        if(self::$iniciado){
+            $this->Add(LOG_INFO, "Tiempo total: ".$time);
+            if(LOG_INFO<=$this->NIVELMOSTRAR){
+                echo '-------------RESUMEN---------------------'.PHP_EOL;
+                echo 'Nº Eventos: '.count($this->datoslog).PHP_EOL;
+                echo 'Tiempo total '.$time.PHP_EOL;
+                if(count($this->contadores)>0){            
+                    echo '------------CONTADORES--------------------'.PHP_EOL;
+                    foreach($this->contadores as $contador=>$valor){
+                        echo 'Recuento '.$contador.":".$valor.PHP_EOL;
+                    }
                 }
+                echo '-----------FIN RESUMEN-------------------'.PHP_EOL;
             }
-            echo '-----------FIN RESUMEN-------------------'.PHP_EOL;
+            fclose($this->fh);
         }
     }
 }
-

@@ -1,12 +1,12 @@
 === Woocommerce CriptoPay ===
 Contributors: CriptoPay
-Donate link: https://www.cripto-pay.com/
+Donate link: https://cripto-pay.com/
 Tags: woocommerce, criptopay, bitcoin, altcoin, divisa, fiat, cripto-moneda
 Requires at least: 4.0.1
 Tested up to: 4.3
 Stable tag: 4.3
-License: GPLv3 or later License
-URI: http://www.gnu.org/licenses/gpl-3.0.html
+License: Copyright 2014-2015 CriptoPay S.L., MIT License
+URI: https://github.com/criptopay/wordpress_woocomerce/blob/master/LICENSE
 WC requires at least: 2.2
 WC tested up to: 2.3
 
@@ -44,6 +44,8 @@ En la pestaña de "Pasarelas de Pago"
 
 
 == Changelog ==
+=2.0=
+*Actualizado a la versión 2.0 API REST CriptoPay
 
 = 1.5 =
 * Compatible con Woocommerce 2.3.x

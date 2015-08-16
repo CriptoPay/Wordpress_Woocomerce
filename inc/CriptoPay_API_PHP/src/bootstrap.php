@@ -12,14 +12,14 @@ use CriptoPayApiRest\src\Comun;
 
 require_once __DIR__ . '/Comun/AutoLoader.php';
 
-define('DOMINIO','criptopay_api_v2');
-define('LANG_DEFECTO','es_ES.utf8');
+define('CP_DOMINIO','criptopay_api_v2');
+define('CP_LANG_DEFECTO','es_ES.utf8');
+define('CP_DEBUG',true);
+putenv("LANG=".CP_LANG_DEFECTO); 
+setlocale(LC_ALL, CP_LANG_DEFECTO);
 
-putenv("LANG=".LANG_DEFECTO); 
-setlocale(LC_ALL, LANG_DEFECTO);
-
-bindtextdomain(DOMINIO, '/locale'); 
-textdomain(DOMINIO);
+bindtextdomain(CP_DOMINIO, '/locale'); 
+textdomain(CP_DOMINIO);
 
 $autoloader = new Comun\AutoLoader(__NAMESPACE__, dirname(__DIR__));
 $autoloader->register();

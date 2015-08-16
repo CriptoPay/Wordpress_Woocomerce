@@ -42,7 +42,7 @@ class CriptoPayApiRest{
         $this->ApiId = $CP_ApiId;
         $this->ApiPassword = $CP_ApiPassword;       
         $this->ApiCertificados = $CP_ApiCertificados;
-        if(DEBUG){
+        if(CP_DEBUG){
             //En modo debug el servidor siempre será SANDBOX
             $this->ApiServidor = "http://sandbox.cripto-pay.com";
         }elseif(!is_null($CP_ApiServidor)){
@@ -285,7 +285,7 @@ class CriptoPayApiRest{
         if(strlen($Dcifrados)>0){
             $Crypted=openssl_private_decrypt(base64_decode($Dcifrados),$Dclaro,self::$KeyPrivada);
             if (!$Crypted) {
-                if(DEBUG){
+                if(CP_DEBUG){
                     echo "CLIENTE_DESENCRIPTAR";
                     var_dump($Dcifrados);
                     throw new Excepciones\Excepcion("No se pueden Desencriptar los datos");
