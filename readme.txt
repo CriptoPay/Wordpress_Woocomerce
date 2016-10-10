@@ -1,51 +1,86 @@
 === Woocommerce CriptoPay ===
 Contributors: CriptoPay
 Donate link: https://cripto-pay.com/
-Tags: woocommerce, criptopay, bitcoin, altcoin, divisa, fiat, cripto-moneda
+Tags: woocommerce, criptopay, bitcoin, altcoin, dogecoin, litecoin, okcash, payment, gateway, accept bitcoin, bitcoin payments, bitcoin plugin, bitcoin wordpress plugin, bitcoin exchange, bitcoin wallet, bitcoin donate, bitcoin gateway, pasarela pago bitcoin, aceptar bitcoin, fiat, cripto-moneda
 Requires at least: 4.0.1
-Tested up to: 4.3
-Stable tag: 4.3
-License: Copyright 2014-2015 CriptoPay S.L., MIT License
-URI: https://github.com/criptopay/wordpress_woocomerce/blob/master/LICENSE
-WC requires at least: 2.2
-WC tested up to: 2.3
+Tested up to: 4.6.1
+Stable tag: 4.6.1
+License: Copyright 2014-2016 CriptoPay S.L., MIT License
+License URI: https://github.com/criptopay/wordpress_woocomerce/blob/master/LICENSE
 
-Integración para Woocommerce del sistema de pago con cripto-monedas con Cripto-Pay.
+CriptoPay payments for WooComerce is a wordpress plugin that allows to accept bitcoins and other altcoins in your online stores using the services of cripto-pay.com.
 
 == Description ==
 
-Añada la pasarela de pagos más segura a Woocommerce.
-Permita a sus usuarios pagar con Bitcoins y Altcoins.
+Cripto-Pay is a platform that allows you to accept a quick, easy and safe way bitcoins and altcoins your online store, with the ability to directly change the currency to your local currency.
 
-Web oficial: [criptopay](https://cripto-pay.com/)
+Oficial Web: [criptopay](https://cripto-pay.com/)
+
+= Benefits =
+
+* Fully automatic operation
+* Accept payments in bitcoins directly into your personal account of cripto-pay.com.
+* Auto change Bitcoin and Altcoins directly to your local currencie.
+* Accept payment in bitcoins for physical and digital downloadable products.
+* Add bitcoin payments option to your existing online store with alternative main currency.
+* Support for many currencies.
+* Set main currency of your store in any currency or bitcoin.
+* Automatic conversion to bitcoin via realtime exchange rate feed and calculations.
 
 == Installation ==
 
-Puede instalarlo automáticamente desde Wordpress, o manualmente:
+No need to install special requirements, or knowledge
 
-1. Descomprima el archivo, y copie la carpeta 'woocommerce-servired-integration-light' en su carpeta de plugins del servidor (/wp-content/plugins/).
-1. Active el plugin desde el menú de Plugins.
+1. Download the plugin directly from here or from the office https://cripto-pay.com/developers page.
 
-== Preguntas frecuentes (FAQs) ==
+2. Create your free account cripto-pay.com.
 
-= ¿ Donde consigo los datos de configuración ? =
+2.1. cripto-pay.com access the API https://cripto-pay.com/panel/api/configurar menu and click "generate".
 
-Su entidad bancaria debe proporcionarle los datos de acceso. Una vez que los tenga, basta con añadirlos al plugin, y ya lo tendrá funcionando.
+2.2. Click on Download "public" and "private" for the necessary safety certificates.
 
-= ¿ Donde se configura el plugin ? =
+3. Copy and paste the ID and password on the previous page in the configuration page WooComerce.
 
-En el menú de Woocommerce->Ajustes
-En la pestaña de "Pasarelas de Pago"
+3.1. Select the downloaded files and upload them to your Wordpress installation.
+
+3.2. Save the configuration.
+
+4. Enjoy the new form of payment via bitcoin and altcoins in your online store.
+
+== Frequently Asked Questions ==
+
+= Where is the configuration data? =
+
+You need access to https://cripto-pay.com/panel/api/configurar and select the user of the API that you need show the data.
+
+= How can configure the plugin ? =
+
+In the menu WooComerce -> Adjust.
+Select tab "Checkout" and then click in "CriptoPay Bitcoin and Altcoins Payments for Woocommerce"
 
 == Screenshots ==
 
-1. Admin - página de configuración.
-2. Tienda - Formas de pago.
+1. Admin - Configuration page.
+2. Store - Checkout.
 
+screenshot-1.png
+screenshot-2.png
+
+== Remove plugin ==
+
+1. Deactivate plugin through the 'Plugins' menu in WordPress
+2. Delete plugin through the 'Plugins' menu in WordPress
 
 == Changelog ==
-=2.0=
-*Actualizado a la versión 2.0 API REST CriptoPay
+
+= 3.2.0 =
+* Update 3.2.0 API REST CriptoPay
+* Update compatibility with Woocomerce 2.6.X
+* Update compatibility with Wordpress 4.6.X
+* Added translations to spanish
+
+= 2.0 =
+* Actualizado a la versión 2.0 API REST CriptoPay
 
 = 1.5 =
 * Compatible con Woocommerce 2.3.x
